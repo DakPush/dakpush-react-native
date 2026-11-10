@@ -1,0 +1,170 @@
+{
+  "name": "dakpush-react-native",
+  "version": "0.1.0",
+  "description": "React Native SDK for DakPush: push notifications with buttons and images, delivery and open stats, and in-app messages, over the native DakPush SDKs.",
+  "main": "./lib/module/index.js",
+  "types": "./lib/typescript/src/index.d.ts",
+  "exports": {
+    ".": {
+      "dakpush-react-native-source": "./src/index.ts",
+      "types": "./lib/typescript/src/index.d.ts",
+      "default": "./lib/module/index.js"
+    },
+    "./app.plugin.js": "./app.plugin.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "src",
+    "lib",
+    "android",
+    "ios",
+    "plugin/build",
+    "app.plugin.js",
+    "*.podspec",
+    "react-native.config.js",
+    "!ios/build",
+    "!android/build",
+    "!android/gradle",
+    "!android/gradlew",
+    "!android/gradlew.bat",
+    "!android/local.properties",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__",
+    "!**/.*"
+  ],
+  "scripts": {
+    "example": "yarn workspace dakpush-react-native-example",
+    "clean": "del-cli lib plugin/build",
+    "prepare": "bob build && tsc --project plugin/tsconfig.json",
+    "build:plugin": "tsc --project plugin/tsconfig.json",
+    "typecheck": "tsc && tsc --project plugin/tsconfig.test.json",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "test": "jest",
+    "vendor:ios": "scripts/vendor-ios.sh",
+    "vendor:ios:check": "scripts/vendor-ios.sh --check"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "push-notifications",
+    "in-app-messaging",
+    "dakpush",
+    "ios",
+    "android"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DakPush/dakpush-react-native.git"
+  },
+  "author": "Md Shoriful Haque Hridoy <155417546+hridoyrocks@users.noreply.github.com> (https://github.com/hridoyrocks)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DakPush/dakpush-react-native/issues"
+  },
+  "homepage": "https://github.com/DakPush/dakpush-react-native#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "devDependencies": {
+    "@eslint/compat": "^2.1.1",
+    "@eslint/eslintrc": "^3.3.7",
+    "@eslint/js": "^9.39.5",
+    "@expo/config-plugins": "~58.0.12",
+    "@react-native/babel-preset": "0.88.1",
+    "@react-native/eslint-config": "0.88.1",
+    "@react-native/jest-preset": "0.88.1",
+    "@types/jest": "^30.0.0",
+    "@types/react": "^19.2.0",
+    "del-cli": "^8.0.1",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-ft-flow": "^3.0.11",
+    "eslint-plugin-prettier": "^5.5.7",
+    "jest": "^30.5.2",
+    "prettier": "^3.9.10",
+    "react": "19.3.0",
+    "react-native": "0.88.1",
+    "react-native-builder-bob": "^0.44.1",
+    "typescript": "^6.0.3"
+  },
+  "peerDependencies": {
+    "expo": ">=52",
+    "react": "*",
+    "react-native": ">=0.76"
+  },
+  "peerDependenciesMeta": {
+    "expo": {
+      "optional": true
+    }
+  },
+  "workspaces": [
+    "example"
+  ],
+  "packageManager": "yarn@4.18.1",
+  "jest": {
+    "preset": "@react-native/jest-preset",
+    "modulePathIgnorePatterns": [
+      "<rootDir>/example/",
+      "<rootDir>/lib/",
+      "<rootDir>/plugin/build/"
+    ],
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.test.ts",
+      "<rootDir>/plugin/src/**/__tests__/**/*.test.ts"
+    ],
+    "roots": [
+      "<rootDir>/src",
+      "<rootDir>/plugin/src"
+    ]
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      [
+        "module",
+        {
+          "esm": true
+        }
+      ],
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  },
+  "codegenConfig": {
+    "name": "RNDakPushSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "io.github.hridoyrocks.dak.reactnative"
+    },
+    "ios": {
+      "modulesProvider": {
+        "DakPush": "RNDakPush"
+      }
+    }
+  },
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false
+  },
+  "create-react-native-library": {
+    "type": "turbo-module",
+    "languages": "kotlin-objc",
+    "tools": [
+      "eslint",
+      "jest"
+    ],
+    "version": "0.64.0"
+  }
+}

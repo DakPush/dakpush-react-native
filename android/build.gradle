@@ -1,0 +1,45 @@
+// The React Native bridge over the DakPush Android SDK
+// (github.com/DakPush/dakpush-android, from JitPack). React Native's Gradle
+// plugin adds JitPack to every project unless the app turns it off with
+// react.includeJitpackRepository=false.
+
+ext.DakPushReactNative = [
+  minSdkVersion: 24,
+  compileSdkVersion: 36,
+  // The native SDK this version of the bridge is made for. An app can pin
+  // another with dakPushAndroidVersion in its android/build.gradle ext.
+  dakPushAndroidVersion: "0.2.0",
+]
+
+ext.getExtOrDefault = { prop ->
+  if (rootProject.ext.has(prop)) {
+    return rootProject.ext.get(prop)
+  }
+
+  return DakPushReactNative[prop]
+}
+
+apply plugin: "com.android.library"
+
+if (project.extensions.findByName("kotlin") == null) {
+  apply plugin: "kotlin-android"
+}
+
+apply plugin: "com.facebook.react"
+
+android {
+  namespace "io.github.hridoyrocks.dak.reactnative"
+
+  compileSdkVersion getExtOrDefault("compileSdkVersion")
+
+  defaultConfig {
+    minSdkVersion getExtOrDefault("minSdkVersion")
+  }
+}
+
+dependencies {
+  implementation "com.facebook.react:react-android"
+  // api: apps with their own FirebaseMessagingService extend or call the
+  // SDK's classes (DakMessagingService, Dak.onNewToken).
+  api "com.github.DakPush:dakpush-android:${getExtOrDefault("dakPushAndroidVersion")}"
+}

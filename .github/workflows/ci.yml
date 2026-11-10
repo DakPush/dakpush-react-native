@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+  # Weekly, so a React Native, Expo or toolchain change that breaks the SDK
+  # shows up before users report it.
+  schedule:
+    - cron: '0 3 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  js:
+    name: Lint, types, tests, package
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - run: yarn lint
+      - run: yarn typecheck
+      - run: yarn test --ci
+      - name: Build the package (lib/ and the Expo plugin)
+        run: yarn prepare
+      - name: What npm would publish
+        run: npm pack --dry-run
+      - name: The vendored iOS SDK is exactly its release tag
+        run: scripts/vendor-ios.sh --check
+
+  android:
+    name: Example app, Android
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: zulu
+          java-version: '17'
+      - name: Accept the Android SDK licenses
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null
+      - name: Build the Expo plugin
+        run: yarn build:plugin
+      # Runs the plugin; without google-services.json the example builds
+      # without Firebase (it then stays unregistered, which is fine here).
+      - name: Prebuild
+        run: yarn example expo prebuild --platform android --no-install
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.gradle/wrapper
+            ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('example/android/gradle/wrapper/gradle-wrapper.properties', 'yarn.lock') }}
+          restore-keys: ${{ runner.os }}-gradle-
+      - name: Build
+        working-directory: example/android
+        env:
+          GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx6g
+        run: ./gradlew assembleDebug -PreactNativeArchitectures=x86_64 --console=plain
+
+  ios:
+    name: Example app, iOS
+    runs-on: macos-latest
+    timeout-minutes: 60
+    env:
+      RCT_USE_RN_DEP: 1
+      RCT_USE_PREBUILT_RNCORE: 1
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1.7.0
+        with:
+          xcode-version: latest-stable
+      - name: Build the Expo plugin
+        run: yarn build:plugin
+      # Runs the plugin: Info.plist, entitlements, the notification service
+      # extension target and its pod.
+      - name: Prebuild and pods
+        run: yarn example expo prebuild --platform ios
+      - name: Build for the simulator
+        working-directory: example/ios
+        run: |
+          xcodebuild -workspace DakPushRN.xcworkspace -scheme DakPushRN \
+            -configuration Debug -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO build | tail -50

@@ -1,0 +1,15 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <!-- Starts the DakPush SDK when the app's process starts, before any
+             activity, from the dakpush.* meta-data in the app's manifest (the
+             Expo plugin writes them). Starting this early lets the SDK see the
+             tap that opened the app and the first activity for in-app
+             messages. Firebase's own provider runs first (its initOrder is
+             100). Without the meta-data it does nothing. -->
+        <provider
+            android:name=".DakPushInitProvider"
+            android:authorities="${applicationId}.dakpush-init"
+            android:exported="false" />
+    </application>
+</manifest>
