@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 - unreleased
+## 0.1.0 - 2026-11-10
 
 First release: the React Native SDK for DakPush, a bridge over the native
 SDKs (Android 0.2.0 from JitPack, iOS 0.2.0 compiled in).
