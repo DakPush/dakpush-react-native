@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.1 - unreleased
+## 0.1.1 - 2026-11-10
 
 - Expo plugin: loads `expo/config-plugins` (from the app's `expo`, a peer
   dependency), as Expo recommends, instead of `@expo/config-plugins`, which is
