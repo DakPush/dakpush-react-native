@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.1 - unreleased
+
+- Expo plugin: loads `expo/config-plugins` (from the app's `expo`, a peer
+  dependency), as Expo recommends, instead of `@expo/config-plugins`, which is
+  not a dependency of this package. 0.1.0 works with npm, Yarn and pnpm's
+  default settings, which make Expo's copy reachable, but would not find it
+  where undeclared packages are unreachable (Yarn Plug'n'Play, pnpm with
+  hoisting turned off).
+
 ## 0.1.0 - 2026-11-10
 
 First release: the React Native SDK for DakPush, a bridge over the native

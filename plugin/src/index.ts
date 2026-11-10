@@ -1,4 +1,4 @@
-import { createRunOncePlugin, type ConfigPlugin } from '@expo/config-plugins';
+import { createRunOncePlugin, type ConfigPlugin } from 'expo/config-plugins';
 
 import { withDakPushAndroid } from './android';
 import { withDakPushIos } from './ios';

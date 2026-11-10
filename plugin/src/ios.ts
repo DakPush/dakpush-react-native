@@ -8,7 +8,7 @@ import {
   withPodfile,
   withXcodeProject,
   type ConfigPlugin,
-} from '@expo/config-plugins';
+} from 'expo/config-plugins';
 
 import type { ResolvedProps } from './props';
 
